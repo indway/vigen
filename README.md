@@ -1,4 +1,11 @@
-<div align="center">
+# VIGEN (Video Generator Engine) Pro Edition
+
+**Dari JSON ke video Shorts siap upload — otomatis, di HP kamu**
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-green?style=flat-square)
+![Formats](https://img.shields.io/badge/Format%20Konten-26-orange?style=flat-square)
+![License](https://img.shields.io/badge/License-Commercial-red?style=flat-square)
 
 ```text
 ██╗   ██╗██╗ ██████╗ ███████╗███╗   ██╗
@@ -8,17 +15,6 @@
  ╚████╔╝ ██║╚██████╔╝███████╗██║ ╚████║
   ╚═══╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝
 ```
-
-**Video Content Generator Engine (Pro Edition)**
-
-*Dari JSON ke video Shorts siap upload — otomatis, di HP kamu*
-
-[![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square)](https://python.org)
-[![Platform](https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-green?style=flat-square)](https://termux.dev)
-[![Formats](https://img.shields.io/badge/Format%20Konten-26-orange?style=flat-square)](#)
-[![License](https://img.shields.io/badge/License-Commercial-red?style=flat-square)](#)
-
-</div>
 
 ---
 
@@ -34,7 +30,7 @@
 Hanya dengan menyusun teks ke dalam file `JSON`, VIGEN akan memprosesnya otomatis menjadi puluhan video pendek (Shorts/Reels/TikTok) yang siap rilis ke semua platform.
 
 ```text
-AI → JSON konten  →  VIGEN Engine  →  MP4 video  →  Auto-upload
+JSON konten  →  VIGEN Engine  →  MP4 video  →  Auto-upload
 ```
 
 ---
@@ -66,26 +62,29 @@ VIGEN Pro dirancang dengan visual styling yang beragam untuk niche apa pun:
 
 Walaupun repositori ini tidak menyertakan kode inti engine `render.py`, cara kerja sistemnya sangat sederhana:
 
-### 1. Menyiapkan File JSON
-VIGEN membaca sekumpulan konten dari antrian `data/pending.json`:
-```json
-{
-  "format": "quotes",
-  "title": "Overthinking itu fana",
-  "hook": "Satu hal yang harus kamu ingat hari ini.",
-  "points": ["Semua sudah diatur.", "Khawatirmu tidak bisa merubah takdir."],
-  "hashtags": ["#refleksi", "#shorts"]
-}
+### 1. Fetching Background Video otomatis
+Sebelum merender, VIGEN dapat mengambil sumber video background secara otomatis.
+```bash
+python3 bg_fetcher.py --niche="nature, waterfall" --count=10
 ```
+Script ini akan langsung mencari video kualitas HD, mengunduh, dan melakukan kompresi secara otomatis agar siap digunakan oleh engine.
 
-### 2. Memulai Rendering
-Developer hanya menjalankan satu baris perintah:
+### 2. Auto-Generate Konten via Gemini AI
+Alih-alih menulis JSON manual, Anda bisa menggunakan modul AI.
+```bash
+python3 ai_generate.py "fakta psikologi overthinking" --count=5
+```
+Engine `ai_generate.py` akan menghubungi *Gemini AI API*, membuat ide konten, lalu menyusunnya secara otomatis ke dalam format JSON yang valid (contoh: antrian `data/pending.json`).
+
+### 3. Memulai Rendering Video Secara Massal
+Setelah data JSON dan aset background siap, developer hanya menjalankan perintah:
 ```bash
 python3 render.py --all
 ```
-Dalam hitungan detik, script secara batch akan memanggil image processing dan FFmpeg.
+Dalam hitungan detik, script secara *batch* otomatis me-render grafis kartu dan menggabungkannya dengan backgound menggunakan library FFmpeg. File output MP4 final akan tersimpan di direktori hasil.
 
-### 3. Otomatisasi Upload
+### 4. Otomatisasi Upload & Scheduling
+Script `upload.py` memastikan video MP4 langsung mengudara:
 ```bash
 python3 upload.py --platform=yt --schedule=auto
 ```
