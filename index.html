@@ -92,7 +92,45 @@
     .badge-purple { background: rgba(168,85,247, 0.1); color: #c084fc; border: 1px solid rgba(168,85,247, 0.2); }
     .badge-blue { background: rgba(59,130,246, 0.1); color: #60a5fa; border: 1px solid rgba(59,130,246, 0.2); }
 
+    /* Bilingual System overrides */
+    html[lang="en"] .l-id { display: none !important; }
+    html[lang="id"] .l-en { display: none !important; }
   </style>
+
+  <script>
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+      localStorage.setItem('vigen_lang', lang);
+      updateBtnStyles(lang);
+    }
+    
+    function updateBtnStyles(lang) {
+      const btnId = document.getElementById('btn-lang-id');
+      const btnEn = document.getElementById('btn-lang-en');
+      if(btnId && btnEn) {
+        if(lang === 'id') {
+          btnId.className = "px-3 py-1 rounded-full text-xs font-bold transition-all text-white bg-purple-500/80 shadow-[0_0_10px_rgba(168,85,247,0.4)]";
+          btnEn.className = "px-3 py-1 rounded-full text-xs font-bold transition-all text-gray-400 hover:text-white";
+        } else {
+          btnEn.className = "px-3 py-1 rounded-full text-xs font-bold transition-all text-white bg-purple-500/80 shadow-[0_0_10px_rgba(168,85,247,0.4)]";
+          btnId.className = "px-3 py-1 rounded-full text-xs font-bold transition-all text-gray-400 hover:text-white";
+        }
+      }
+    }
+
+    (function() {
+      // Auto-detect language or load from storage
+      let saved = localStorage.getItem('vigen_lang');
+      if(!saved) {
+        const navLang = navigator.language || navigator.userLanguage || 'en';
+        saved = (navLang.toLowerCase().startsWith('id') || navLang.toLowerCase().startsWith('in')) ? 'id' : 'en';
+      }
+      document.documentElement.lang = saved;
+      
+      // Update buttons after DOM is loaded
+      window.addEventListener('DOMContentLoaded', () => updateBtnStyles(saved));
+    })();
+  </script>
 </head>
 <body class="relative min-h-screen antialiased selection:bg-purple-500/30">
 
@@ -104,10 +142,22 @@
   <nav class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center relative z-10">
     <div class="brand-font text-2xl font-bold tracking-tight">VIGEN<span class="text-purple-500">.</span></div>
     <div class="flex items-center gap-6 text-sm font-medium text-gray-400">
-      <a href="#features" class="hover:text-white transition-colors">Features</a>
-      <a href="#workflow" class="hover:text-white transition-colors">Workflow</a>
+      <a href="#features" class="hover:text-white transition-colors l-id">Fitur</a>
+      <a href="#features" class="hover:text-white transition-colors l-en">Features</a>
+      
+      <a href="#workflow" class="hover:text-white transition-colors l-id">Alur Kerja</a>
+      <a href="#workflow" class="hover:text-white transition-colors l-en">Workflow</a>
+      
       <a href="#formats" class="hover:text-white transition-colors">Formats</a>
-      <a href="https://github.com/indway/vigen" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-white">View Repository</a>
+      
+      <a href="https://github.com/indway/vigen" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-white l-id hidden md:block">Lihat Repository</a>
+      <a href="https://github.com/indway/vigen" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-white l-en hidden md:block">View Repository</a>
+      
+      <!-- Languange switcher -->
+      <div class="flex items-center bg-white/5 rounded-full p-1 border border-white/10 ml-2">
+        <button onclick="setLang('id')" id="btn-lang-id" class="px-3 py-1 rounded-full text-xs font-bold transition-all text-gray-400">ID</button>
+        <button onclick="setLang('en')" id="btn-lang-en" class="px-3 py-1 rounded-full text-xs font-bold transition-all text-gray-400">EN</button>
+      </div>
     </div>
   </nav>
 
@@ -122,13 +172,20 @@
         VIGEN Pro Edition
       </div>
       
-      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight l-id">
+        Zero Cloud Costs. <br />
+        <span class="glow-text">Generator Video Tanpa Batas.</span>
+      </h1>
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight l-en">
         Zero Cloud Costs. <br />
         <span class="glow-text">Infinite Video Generation.</span>
       </h1>
       
-      <p class="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed l-id">
         Sistem produksi konten otomatis tanpa server. Render massal video TikTok, Reels, dan Shorts dari JSON langsung di Android Termux atau Linux Anda.
+      </p>
+      <p class="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed l-en">
+        Fully automated content production without servers. Bulk render TikTok, Reels, and Shorts from JSON directly on your Android Termux or Linux environment.
       </p>
 
       <div class="glass-panel p-6 text-left max-w-3xl mx-auto mb-16 shadow-2xl relative overflow-hidden">
@@ -141,7 +198,8 @@
           </div>
           <div class="text-xs text-gray-500 font-mono">~/vigen-engine/termux</div>
         </div>
-        <pre><code>$ python3 ai_generate.py "fakta psikologi" --count=10
+        <!-- Both IDs & EN context codeblock can be the same, or slight translation -->
+        <pre class="l-id"><code>$ python3 ai_generate.py "fakta psikologi" --count=10
 [+] 10 konten berhasil di-generate ke antrian JSON.
 
 $ python3 render.py --all
@@ -150,6 +208,15 @@ $ python3 render.py --all
 
 $ python3 upload.py --platform=all
 [+] Mengunggah ke YouTube Shorts, IG Reels, TikTok... Selesai.</code></pre>
+        <pre class="l-en"><code>$ python3 ai_generate.py "psychology facts" --count=10
+[+] 10 content pieces generated to the JSON queue.
+
+$ python3 render.py --all
+[ Rendering ] ■■■■■■■■■■■■■■■■■■■■ 100% (10/10)
+[+] Render complete. Output: 10 MP4 (03m:14s)
+
+$ python3 upload.py --platform=all
+[+] Uploading to YouTube Shorts, IG Reels, TikTok... Done.</code></pre>
       </div>
 
       <div class="flex flex-wrap justify-center gap-4 text-sm font-mono text-gray-400">
@@ -163,9 +230,13 @@ $ python3 upload.py --platform=all
 
   <!-- Features -->
   <section id="features" class="max-w-6xl mx-auto px-6 py-24 relative z-10 border-t border-white/5">
-    <div class="mb-16">
+    <div class="mb-16 l-id">
       <h2 class="text-3xl font-bold mb-4">Kenapa VIGEN?</h2>
       <p class="text-gray-400 max-w-xl">Bukan aplikasi cloud berbayar bulanan. Vigen adalah core engine komersial milik Anda sendiri yang bekerja 24/7 di balik layar layar.</p>
+    </div>
+    <div class="mb-16 l-en">
+      <h2 class="text-3xl font-bold mb-4">Why VIGEN?</h2>
+      <p class="text-gray-400 max-w-xl">Not a paid monthly cloud service. Vigen is your privately-owned commercial engine running 24/7 in the background.</p>
     </div>
 
     <div class="grid md:grid-cols-3 gap-6">
@@ -173,33 +244,46 @@ $ python3 upload.py --platform=all
         <div class="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400 mb-6">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
         </div>
-        <h3 class="text-xl font-semibold mb-3">Bulk Automations</h3>
-        <p class="text-gray-400 text-sm leading-relaxed">Sistem pipeline yang memproses puluhan konten otomatis dari fetching materi, rendering batch, hingga auto-publishing tanpa campur tangan manual.</p>
+        <h3 class="text-xl font-semibold mb-3 l-id">Bulk Automations</h3>
+        <h3 class="text-xl font-semibold mb-3 l-en">Bulk Automations</h3>
+        
+        <p class="text-gray-400 text-sm leading-relaxed l-id">Sistem pipeline yang memproses puluhan konten otomatis dari fetching materi, rendering batch, hingga auto-publishing tanpa campur tangan manual.</p>
+        <p class="text-gray-400 text-sm leading-relaxed l-en">Pipeline system that processes dozens of automated contents from fetching materials and batch rendering to auto-publishing without any manual intervention.</p>
       </div>
       
       <div class="glass-panel p-8 card-hover transition-all duration-300">
         <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400 mb-6">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
         </div>
-        <h3 class="text-xl font-semibold mb-3">26 Dinamis Format</h3>
-        <p class="text-gray-400 text-sm leading-relaxed">Lebih dari sekadar text-on-video. Menyediakan struktur untuk konten psikologi, berita fakta, edukasi, interaksi polls, hingga konten Islami.</p>
+        <h3 class="text-xl font-semibold mb-3 l-id">26 Dinamis Format</h3>
+        <h3 class="text-xl font-semibold mb-3 l-en">26 Dynamic Formats</h3>
+        
+        <p class="text-gray-400 text-sm leading-relaxed l-id">Lebih dari sekadar text-on-video. Menyediakan struktur untuk konten psikologi, berita fakta, edukasi, interaksi polls, hingga konten Islami.</p>
+        <p class="text-gray-400 text-sm leading-relaxed l-en">More than just text-on-video. Provides visual structures for psychology content, news facts, education, interactive polls, and Islamic content.</p>
       </div>
       
       <div class="glass-panel p-8 card-hover transition-all duration-300">
         <div class="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-400 mb-6">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
         </div>
-        <h3 class="text-xl font-semibold mb-3">Custom AI Generative</h3>
-        <p class="text-gray-400 text-sm leading-relaxed">Integrasi Gemini API memastikan skrip konten harian tertulis sempurna sesuai target niche Anda lalu disusun langsung menjadi JSON format yang valid.</p>
+        <h3 class="text-xl font-semibold mb-3 l-id">Custom AI Generative</h3>
+        <h3 class="text-xl font-semibold mb-3 l-en">Custom AI Generative</h3>
+        
+        <p class="text-gray-400 text-sm leading-relaxed l-id">Integrasi Gemini API memastikan skrip konten harian tertulis sempurna sesuai target niche Anda lalu disusun langsung menjadi JSON format yang valid.</p>
+        <p class="text-gray-400 text-sm leading-relaxed l-en">Gemini API integration ensures daily content scripts are perfectly written and formatted straight into valid JSON queue lists.</p>
       </div>
     </div>
   </section>
 
   <!-- Workflow -->
   <section id="workflow" class="max-w-6xl mx-auto px-6 py-24 relative z-10 border-t border-white/5">
-    <div class="mb-16">
-      <h2 class="text-3xl font-bold mb-4">4 Steps Pipeline</h2>
-      <p class="text-gray-400 max-w-xl">Dari ide hingga upload dikerjakan otomatis dalam arsitektur script berantai.</p>
+    <div class="mb-16 l-id">
+      <h2 class="text-3xl font-bold mb-4">4 Langkah Arsitektur</h2>
+      <p class="text-gray-400 max-w-xl">Dari ide hingga upload dikerjakan otomatis dalam script berantai.</p>
+    </div>
+    <div class="mb-16 l-en">
+      <h2 class="text-3xl font-bold mb-4">4 Step Pipeline Overview</h2>
+      <p class="text-gray-400 max-w-xl">From conceptualization to automatic uploading in a sequential script setup.</p>
     </div>
 
     <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-purple-500/20 before:via-blue-500/20 before:to-transparent">
@@ -209,10 +293,12 @@ $ python3 upload.py --platform=all
         <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-[#0d0d0d] text-gray-300 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-[0_0_0_4px_rgba(5,5,5,1)] z-10 font-mono text-sm">1</div>
         <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-bold text-lg">BG Fetcher</h4>
+            <h4 class="font-bold text-lg l-id">Background Fetcher</h4>
+            <h4 class="font-bold text-lg l-en">Background Fetcher</h4>
             <span class="badge badge-purple">bg_fetcher.py</span>
           </div>
-          <p class="text-sm text-gray-400 mb-4">Script otomatis mencari, mendownload, & kompresi konten visual royalty-free beresolusi HD berdasarkan niche referensi.</p>
+          <p class="text-sm text-gray-400 mb-4 l-id">Script otomatis mencari, mendownload, & kompresi konten visual royalty-free beresolusi HD berdasarkan niche referensi.</p>
+          <p class="text-sm text-gray-400 mb-4 l-en">A dedicated script to automatically fetch, download, and compress royalty-free HD visual background assets tailored to your niche.</p>
           <pre><code>python3 bg_fetcher.py --niche="nature"</code></pre>
         </div>
       </div>
@@ -222,10 +308,12 @@ $ python3 upload.py --platform=all
         <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-[#0d0d0d] text-gray-300 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-[0_0_0_4px_rgba(5,5,5,1)] z-10 font-mono text-sm">2</div>
         <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-bold text-lg">AI Content Generation</h4>
+            <h4 class="font-bold text-lg l-id">GenAI Ideation</h4>
+            <h4 class="font-bold text-lg l-en">GenAI Ideation</h4>
             <span class="badge badge-blue">ai_generate.py</span>
           </div>
-          <p class="text-sm text-gray-400 mb-4">Mengkoneksikan input topik ke AI & memparsing ouput menjadi JSON siap render.</p>
+          <p class="text-sm text-gray-400 mb-4 l-id">Mengkoneksikan input topik ke AI & memparsing ouput menjadi JSON siap render.</p>
+          <p class="text-sm text-gray-400 mb-4 l-en">Bridges topic inputs to Gemini Gen-AI, parsing outputs directly into render-ready JSON batches.</p>
           <pre><code>python3 ai_generate.py "mental health" 10</code></pre>
         </div>
       </div>
@@ -235,10 +323,12 @@ $ python3 upload.py --platform=all
         <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-[#0d0d0d] text-gray-300 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-[0_0_0_4px_rgba(5,5,5,1)] z-10 font-mono text-sm">3</div>
         <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-bold text-lg">Batch FFmpeg Engine</h4>
+            <h4 class="font-bold text-lg l-id">Batch FFmpeg Engine</h4>
+            <h4 class="font-bold text-lg l-en">Batch FFmpeg Engine</h4>
             <span class="badge badge-purple">render.py</span>
           </div>
-          <p class="text-sm text-gray-400 mb-4">Sistem inti memproses layout, merender teks kartu dengan Pillow, lalu menyatukannya dengan Video BG dan BGM menggunakan FFmpeg.</p>
+          <p class="text-sm text-gray-400 mb-4 l-id">Sistem inti memproses layout, merender teks kartu dengan Pillow, lalu menyatukannya dengan Video BG dan BGM menggunakan FFmpeg.</p>
+          <p class="text-sm text-gray-400 mb-4 l-en">The core system computes the dynamic layout, renders the card text UI via Pillow, and stitches it seamlessly over Video BG & BGM using FFmpeg.</p>
           <pre><code>python3 render.py --all</code></pre>
         </div>
       </div>
@@ -248,10 +338,12 @@ $ python3 upload.py --platform=all
         <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white/10 bg-[#0d0d0d] text-gray-300 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-[0_0_0_4px_rgba(5,5,5,1)] z-10 font-mono text-sm">4</div>
         <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-panel p-6">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="font-bold text-lg">Auto Multi-platform</h4>
+            <h4 class="font-bold text-lg l-id">Auto Multi-platform</h4>
+            <h4 class="font-bold text-lg l-en">Auto Multi-platform</h4>
             <span class="badge badge-blue">upload.py</span>
           </div>
-          <p class="text-sm text-gray-400 mb-4">Hasil MP4 akhir langsung disuntik metadata dan tersebar via API ke multi social channel.</p>
+          <p class="text-sm text-gray-400 mb-4 l-id">Hasil MP4 akhir langsung disuntik metadata dan tersebar via API ke multi social channel.</p>
+          <p class="text-sm text-gray-400 mb-4 l-en">Final compiled MP4 assets are embedded with smart metadata and published directly via platform APIs.</p>
           <pre><code>python3 upload.py --platform=all</code></pre>
         </div>
       </div>
@@ -261,9 +353,13 @@ $ python3 upload.py --platform=all
 
   <!-- Video Demo -->
   <section id="demo" class="max-w-6xl mx-auto px-6 py-24 relative z-10 border-t border-white/5">
-    <div class="mb-16 text-center max-w-2xl mx-auto">
+    <div class="mb-16 text-center max-w-2xl mx-auto l-id">
       <h2 class="text-3xl font-bold mb-4">Demo Hasil Render</h2>
       <p class="text-gray-400">Tonton sekilas kualitas output produksi mandiri menggunakan sistem rotasi aset VIGEN. Rendering 100% menggunakan script secara massal.</p>
+    </div>
+    <div class="mb-16 text-center max-w-2xl mx-auto l-en">
+      <h2 class="text-3xl font-bold mb-4">Output Rendering Demo</h2>
+      <p class="text-gray-400">Watch a glimpse of the autonomous output quality processed entirely via VIGEN scripts with rotating assets.</p>
     </div>
     
     <div class="relative max-w-4xl mx-auto">
@@ -277,7 +373,8 @@ $ python3 upload.py --platform=all
         <!-- Overlay if no video available (fallback style behind) -->
         <div class="absolute text-center z-10 p-8">
           <svg class="w-16 h-16 mx-auto mb-4 text-gray-700 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-          <p class="text-gray-600 font-medium">Upload sample video ke <code>demo/sample.mp4</code></p>
+          <p class="text-gray-600 font-medium l-id">Upload sample video ke <code>demo/sample.mp4</code></p>
+          <p class="text-gray-600 font-medium l-en">Upload a sample video to <code>demo/sample.mp4</code></p>
         </div>
       </div>
     </div>
@@ -285,45 +382,61 @@ $ python3 upload.py --platform=all
 
   <!-- FAQ -->
   <section id="faq" class="max-w-[800px] mx-auto px-6 py-24 relative z-10 border-t border-white/5">
-    <div class="mb-16 text-center">
+    <div class="mb-16 text-center l-id">
       <h2 class="text-3xl font-bold mb-4">Yang Sering Ditanyakan (FAQ)</h2>
       <p class="text-gray-400">Informasi ringkas agar kamu memahami cara arsitektur VIGEN bertugas.</p>
+    </div>
+    <div class="mb-16 text-center l-en">
+      <h2 class="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+      <p class="text-gray-400">Quick details on VIGEN Architecture expectations.</p>
     </div>
 
     <div class="space-y-4">
       <details class="glass-panel group [&_summary::-webkit-details-marker]:hidden bg-[#0a0a0a]/50">
         <summary class="flex cursor-pointer items-center justify-between gap-1.5 p-6 font-medium text-white transition-colors group-hover:text-purple-400">
-          <h3 class="text-lg font-semibold">Apakah sistem ini wajib langganan bulanan?</h3>
+          <h3 class="text-lg font-semibold l-id">Apakah sistem ini wajib langganan bulanan?</h3>
+          <h3 class="text-lg font-semibold l-en">Is this a monthly subscription SaaS?</h3>
           <span class="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
           </span>
         </summary>
-        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2">
-          Sama sekali <strong>tidak</strong>. VIGEN adalah engine lokal yang berjalan di ekosistem kamu sendiri. Tidak ada cloud server dari pihak kami, sehingga kamu bebas melakukan render video sepuasnya secara gratis (hanya mengkonsumsi baterai HP/Server kamu).
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-id">
+          Sama sekali <strong>tidak</strong>. VIGEN adalah engine lokal yang berjalan di ekosistem kamu sendiri. Tidak ada cloud server dari pihak kami, sehingga kamu bebas melakukan render video sepuasnya secara gratis (hanya mengkonsumsi daya HP/Server kamu).
+        </div>
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-en">
+          Absolutely <strong>not</strong>. VIGEN is a local engine running seamlessly within your device sandbox securely. There's no ongoing server cost associated, which means unlimited autonomous video processing natively.
         </div>
       </details>
 
       <details class="glass-panel group [&_summary::-webkit-details-marker]:hidden bg-[#0a0a0a]/50">
         <summary class="flex cursor-pointer items-center justify-between gap-1.5 p-6 font-medium text-white transition-colors group-hover:text-blue-400">
-          <h3 class="text-lg font-semibold">HP saya kentang, apa sanggup menjalankan Script Render ini?</h3>
+          <h3 class="text-lg font-semibold l-id">HP saya spesifikasinya rendah, apa sanggup?</h3>
+          <h3 class="text-lg font-semibold l-en">My device specs are rather low. Will it support it?</h3>
           <span class="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
           </span>
         </summary>
-        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2">
-          Engine berbasis Python di terminal (Termux) jauh lebih ringan dibandingkan kamu membuka aplikasi editor video berat. Proses penyatuan frame dan tipografi sangat teroptimasi menggunakan library kompilasi rendah. 4GB RAM Android terbaru sangat mumpuni merekayasa puluhan klip per malam.
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-id">
+          Engine berbasis Python di terminal (Termux) jauh lebih ringan dibandingkan kamu membuka aplikasi editor video berat. Proses penyatuan frame dan tipografi sangat teroptimasi menggunakan library CLI. RAM Android minimal sekalipun cukup mumpuni merekayasa puluhan klip per malam.
+        </div>
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-en">
+          Because the Python-driven CLI engine runs purely natively without any heavyweight GUI layout timeline, it relies on exceptionally lightweight encoding workflows to merge frames, making a simple Android device adequately able to render dozens of short-form videos overnight. 
         </div>
       </details>
 
       <details class="glass-panel group [&_summary::-webkit-details-marker]:hidden bg-[#0a0a0a]/50">
         <summary class="flex cursor-pointer items-center justify-between gap-1.5 p-6 font-medium text-white transition-colors group-hover:text-purple-400">
-          <h3 class="text-lg font-semibold">Tersedia untuk layout dan jenis platform apa saja?</h3>
+          <h3 class="text-lg font-semibold l-id">Tersedia untuk layout dan desain apa saja?</h3>
+          <h3 class="text-lg font-semibold l-en">What layout frameworks or designs are bundled?</h3>
           <span class="shrink-0 transition duration-300 group-open:-rotate-180">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
           </span>
         </summary>
-        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2">
-          Hasil video didesain untuk video vertikal 9:16 cocok untuk (TikTok, YouTube Shorts, dan IG Reels). Ada 26 koleksi template dinamis seperti <strong>Berita, Dialog, Reminder, Peringatan, QnA, Fakta Random, Hadits</strong> dsb.
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-id">
+          Hasil video didesain untuk video vertikal 9:16 cocok untuk (TikTok, YouTube Shorts, dan IG Reels). Saat ini tersedia 26 koleksi template dinamis bawaan seperti <strong>Berita, Dialog Chat, Motivasi Reminder, QnA Islami, Fakta Aneh, Poll Perbandingan</strong> dsb.
+        </div>
+        <div class="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4 mt-2 l-en">
+          Outputs are tuned natively for TikTok, Vertical Shorts, and Reels formats (9:16 aspect ratio). The engine inherently carries 26 structural templates such as <strong>Chat Dialogues, Motivation Quotes, Islamic Verses displays, Random Fact Boxes, Comparison Polls</strong> and many more.
         </div>
       </details>
     </div>
@@ -332,7 +445,7 @@ $ python3 upload.py --platform=all
   <!-- CTA -->
   <section class="border-t border-white/5 py-24 relative overflow-hidden">
     <div class="glow-circle" style="top: 50%; width: 800px; height: 800px; opacity: 0.5;"></div>
-    <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10 l-id">
       <h2 class="text-4xl font-bold mb-6">Mulai Produksi Skala Besar</h2>
       <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">VIGEN merupakan commercial pipeline yang diperuntukkan bagi content creator yang serius mengatur scale aset digital secara mandiri.</p>
       
@@ -344,12 +457,29 @@ $ python3 upload.py --platform=all
         </a>
       </div>
     </div>
+    
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10 l-en">
+      <h2 class="text-4xl font-bold mb-6">Start Scaling Faster</h2>
+      <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">VIGEN is a serious commercial setup engineered for creators looking to autonomously scale their multi-platform digital footprints.</p>
+      
+      <div class="p-8 glass-panel inline-block border-purple-500/20">
+        <p class="text-sm text-gray-400 mb-2 uppercase tracking-wide">Public Showcase Only</p>
+        <p class="mb-6 font-medium">The proprietary source code relies securely on licensing logic.</p>
+        <a href="mailto:indway@duck.com" class="inline-block px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-colors">
+          Purchase Licensing via Email
+        </a>
+      </div>
+    </div>
   </section>
 
   <footer class="border-t border-white/5 py-8 text-center text-gray-500 text-sm">
-    <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-6xl mx-auto px-6 l-id">
       <p><em>Dimasak dari IndwayLabs</em> <strong>Tertarik dengan lisensi VIGEN? Hubungi via <a href="mailto:indway@duck.com" class="text-white hover:underline">indway@duck.com</a> atau via DM instagram <a href="https://instagram.com/indthatway" class="text-white hover:underline">@indthatway</a> untuk informasi lebih lanjut!</strong></p>
-      <p class="mt-2 text-gray-600">This page acts as a demonstration landing page for VIGEN Engine on GitHub Pages.</p>
+      <p class="mt-2 text-gray-600">Halaman ini digunakan untuk keperluan landing page demostrasi Github Pages milik VIGEN Engine.</p>
+    </div>
+    <div class="max-w-6xl mx-auto px-6 l-en">
+      <p><em>Crafted by IndwayLabs</em> <strong>Interested in grabbing VIGEN Engine framework license? Drop a line via <a href="mailto:indway@duck.com" class="text-white hover:underline">indway@duck.com</a> or directly slide into our Instagram <a href="https://instagram.com/indthatway" class="text-white hover:underline">@indthatway</a> for custom quotes and integrations!</strong></p>
+      <p class="mt-2 text-gray-600">This page serves purely as a demonstration landing page for VIGEN Engine on GitHub Pages.</p>
     </div>
   </footer>
 
